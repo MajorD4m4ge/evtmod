@@ -459,6 +459,7 @@ def WriteData(volume, file, clusterlist):
     status = True
     error = ''
     global ReadClusterList
+    global FileData
 
     #try:
     if (debug >= 1):
@@ -467,7 +468,9 @@ def WriteData(volume, file, clusterlist):
         #Write data off of Data Section - Each Cluster is 2048 bytes and it starts at Cluster 2
         #Each cluster is 2048 bytes
         #clusterlist.insert(0, FirstCluster) #Adding First Cluster back in
-        with open('\\\\.\\c:', "rb+") as f: 
+        FileData = FileData.replace(b'\x10\x02\x00\x00\x08', b'\x11\x02\x00\x00\x10')
+        sys.exit()
+        with open('\\\\.\\c:', "rb+") as f:
             if (debug >= 1):
                 print('Opening Volume: ' + str(volume))
             #print (clusterlist)
@@ -596,9 +599,9 @@ def main(argv):
             Failed(error)
         status, error = WriteData(volume, file, ReadClusterList)
         if (status):
-            print('| [+] Writing Data.                                                      |')
+            print('| [+] Zapping Event Log.                                                 |')
         else:
-            print('| [-] Writing Data.                                                      |')
+            print('| [-] Zapping Event Log.                                                 |')
             Failed(error)
         Completed()
 
