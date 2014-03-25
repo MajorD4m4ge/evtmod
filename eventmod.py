@@ -461,6 +461,7 @@ def WriteData(volume, file, clusterlist):
     x = 0
     global ReadClusterList
     global FileData
+    global ClusterSize
 
     try:
         if (debug >= 1):
@@ -480,11 +481,11 @@ def WriteData(volume, file, clusterlist):
                 if (debug >= 1):
                     print('\tSeeking to Cluster (Bytes) [Cluster]: ' + '[' + str(cluster) + ']' + str(seeker))
                 #chunk = 512 * b'\x00'
-                chunk = FileData[x:x+512]
+                chunk = FileData[x:x+ClusterSize]
                 if (debug >= 1):
                     print('\tData Chunk Written: ' + str(chunk))
                 f.write(chunk)
-                x += 512
+                x += ClusterSize
         if (debug >= 1):
                 print('\tCompleted Writing Data.')
     except:
