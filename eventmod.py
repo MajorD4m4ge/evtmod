@@ -458,18 +458,18 @@ def SearchFAT(volume, FATOffset, FirstCluster):
 def WriteData(volume, file, clusterlist):
     status = True
     error = ''
+    x = 0
     global ReadClusterList
     global FileData
 
-    #try:
-    if (debug >= 1):
-        print('Entering WriteData:')
+    try:
+        if (debug >= 1):
+            print('Entering WriteData:')
         chunk = ''
-        #Write data off of Data Section - Each Cluster is 2048 bytes and it starts at Cluster 2
-        #Each cluster is 2048 bytes
-        #clusterlist.insert(0, FirstCluster) #Adding First Cluster back in
+            #Write data off of Data Section - Each Cluster is 2048 bytes and it starts at Cluster 2
+            #Each cluster is 2048 bytes
+            #clusterlist.insert(0, FirstCluster) #Adding First Cluster back in
         FileData = FileData.replace(b'\x10\x02\x00\x00\x08', b'\x11\x02\x00\x00\x10')
-        sys.exit()
         with open('\\\\.\\c:', "rb+") as f:
             if (debug >= 1):
                 print('Opening Volume: ' + str(volume))
@@ -479,16 +479,18 @@ def WriteData(volume, file, clusterlist):
                 f.seek(seeker)  #Each ClusterNum - 2 (Offset) * Bytes per cluster + (DataAreaStart * 512)
                 if (debug >= 1):
                     print('\tSeeking to Cluster (Bytes) [Cluster]: ' + '[' + str(cluster) + ']' + str(seeker))
-                chunk = 512 * b'\x00'
+                #chunk = 512 * b'\x00'
+                chunk = FileData[x:x+512]
                 if (debug >= 1):
                     print('\tData Chunk Written: ' + str(chunk))
                 f.write(chunk)
+                x += 512
         if (debug >= 1):
-            print('\tCompleted Writing Data.')
-    #except:
-        #error = 'Error: Cannot Write Data.'
-        #status = False
-    #finally:
+                print('\tCompleted Writing Data.')
+    except:
+        error = 'Error: Cannot Write Data.'
+        status = False
+    finally:
         return status, error
 
 def signal_handler(signal, frame):
